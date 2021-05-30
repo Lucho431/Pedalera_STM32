@@ -1,0 +1,4 @@
+osc_dac_lfs.c:55:6:osc_dac_init	16	static
+osc_dac_lfs.c:63:6:osc_dac_update	8	static
+osc_dac_lfs.c:81:8:osc_setNote	16	static
+osc_dac_lfs.c:96:8:osc_setRatios	16	static

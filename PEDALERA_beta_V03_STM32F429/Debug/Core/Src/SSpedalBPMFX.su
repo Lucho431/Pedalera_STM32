@@ -1,0 +1,12 @@
+SSpedalBPMFX.c:87:15:makeChord	24	static
+SSpedalBPMFX.c:110:6:setChord	16	static
+SSpedalBPMFX.c:167:6:__turnOnScreen	16	static
+SSpedalBPMFX.c:185:6:__chordScreen	8	static
+SSpedalBPMFX.c:211:6:__mainScreen	8	static
+SSpedalBPMFX.c:258:6:__tunneScreen	8	static
+SSpedalBPMFX.c:277:6:__plesewaitScreen	16	static
+SSpedalBPMFX.c:325:6:__on_off_octave	8	static
+SSpedalBPMFX.c:343:6:__recuest_footkey	8	static
+SSpedalBPMFX.c:362:6:__pop_up_savedChord	16	static
+SSpedalBPMFX.c:384:6:__pop_up_sustain	8	static
+SSpedalBPMFX.c:416:6:__pop_up_cancel	8	static

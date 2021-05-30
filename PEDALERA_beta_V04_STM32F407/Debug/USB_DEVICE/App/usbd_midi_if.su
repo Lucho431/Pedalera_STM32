@@ -1,0 +1,4 @@
+usbd_midi_if.c:34:10:MIDI_DataRx	24	static
+usbd_midi_if.c:171:10:MIDI_DataTx	24	static
+usbd_midi_if.c:186:10:MIDI_SendBuffer	24	static
+usbd_midi_if.c:200:6:MIDI_SendCheck	8	static

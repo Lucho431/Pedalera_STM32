@@ -1,0 +1,15 @@
+main.c:211:5:main	8	static
+main.c:351:6:SystemClock_Config	88	static
+main.c:392:6:inputCursor	24	static
+main.c:420:6:inputSustains	16	static
+main.c:490:6:inputChord	8	static
+main.c:515:6:inputOctave	8	static
+main.c:545:6:inputTunne	8	static
+main.c:568:6:inputPresets	24	static
+main.c:594:6:inputNotes	16	static
+main.c:646:6:inputSaveChord	16	static
+main.c:681:6:chordSelect	16	static
+main.c:756:6:tunneSelect	16	static
+main.c:780:6:sendChord	32	static
+main.c:813:6:HAL_TIM_PeriodElapsedCallback	16	static
+main.c:828:6:Error_Handler	4	static

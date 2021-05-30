@@ -1,0 +1,2 @@
+drawing_SSD1306.c:186:6:SSD1306_DrawPicture_custom	32	static
+drawing_SSD1306.c:203:6:SSD1306_DrawPicture_16x16	24	static
