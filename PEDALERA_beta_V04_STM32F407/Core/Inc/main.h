@@ -78,6 +78,12 @@ void Error_Handler(void);
 #define SOLb_GPIO_Port GPIOC
 #define BOTON_AZUL_Pin GPIO_PIN_0
 #define BOTON_AZUL_GPIO_Port GPIOA
+#define SCLK_leds_Pin GPIO_PIN_9
+#define SCLK_leds_GPIO_Port GPIOD
+#define ST_leds_Pin GPIO_PIN_10
+#define ST_leds_GPIO_Port GPIOD
+#define SD_leds_Pin GPIO_PIN_11
+#define SD_leds_GPIO_Port GPIOD
 #define LED_VERDE_Pin GPIO_PIN_12
 #define LED_VERDE_GPIO_Port GPIOD
 #define LED_NARANJA_Pin GPIO_PIN_13
@@ -86,6 +92,10 @@ void Error_Handler(void);
 #define LED_ROJO_GPIO_Port GPIOD
 #define LED_AZUL_Pin GPIO_PIN_15
 #define LED_AZUL_GPIO_Port GPIOD
+#define MIDI_TX_Pin GPIO_PIN_6
+#define MIDI_TX_GPIO_Port GPIOC
+#define MIDI_RX_Pin GPIO_PIN_7
+#define MIDI_RX_GPIO_Port GPIOC
 #define CHORD_Pin GPIO_PIN_9
 #define CHORD_GPIO_Port GPIOC
 #define PRESET5_Pin GPIO_PIN_8
