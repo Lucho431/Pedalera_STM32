@@ -47,6 +47,7 @@ pFlash              0x20              Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx
 lastState           0x1f              Core/Src/main.o
 htim3               0x40              Core/Src/tim.o
 i2c_handler         0x4               Core/Src/lcd_i2c_IT_lfs.o
+__status_button     0x1f              Core/Src/buttonsBPMFX.o
 midi_msg            0x4               Core/Src/main.o
 hadc1               0x48              Core/Src/adc.o
 hdac                0x14              Core/Src/dac.o
@@ -60,6 +61,7 @@ htim2               0x40              Core/Src/tim.o
 APP_Rx_Buffer       0x100             Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Src/usbd_midi.o
 USBD_StrDesc        0x200             USB_DEVICE/App/usbd_desc.o
 chordInv            0x4               Core/Src/SSpedalBPMFX.o
+__read_button       0x1f              Core/Src/buttonsBPMFX.o
 sust_id             0x1               Core/Src/SSpedalBPMFX.o
 handler_dac         0x4               Core/Src/osc_dac_lfs.o
 
@@ -236,6 +238,132 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x21e Core/Src/adc.o
  .debug_macro   0x0000000000000000       0xba Core/Src/adc.o
  .debug_macro   0x0000000000000000      0x12d Core/Src/adc.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .group         0x0000000000000000        0xc Core/Src/buttonsBPMFX.o
+ .text          0x0000000000000000        0x0 Core/Src/buttonsBPMFX.o
+ .data          0x0000000000000000        0x0 Core/Src/buttonsBPMFX.o
+ .bss           0x0000000000000000        0x0 Core/Src/buttonsBPMFX.o
+ .bss.__last_button
+                0x0000000000000000       0x1f Core/Src/buttonsBPMFX.o
+ .text.readButtons
+                0x0000000000000000      0x39c Core/Src/buttonsBPMFX.o
+ .text.updateInputs
+                0x0000000000000000       0x80 Core/Src/buttonsBPMFX.o
+ .text.getStatButton
+                0x0000000000000000       0x20 Core/Src/buttonsBPMFX.o
+ .bss.readStatus.8880
+                0x0000000000000000        0x1 Core/Src/buttonsBPMFX.o
+ .debug_info    0x0000000000000000      0x3f9 Core/Src/buttonsBPMFX.o
+ .debug_abbrev  0x0000000000000000      0x163 Core/Src/buttonsBPMFX.o
+ .debug_aranges
+                0x0000000000000000       0x30 Core/Src/buttonsBPMFX.o
+ .debug_ranges  0x0000000000000000       0x20 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x257 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0xa5a Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x1a2 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x2e Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x2f Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x22 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x8e Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x51 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0xef Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x6a Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x1df Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x1c Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x22 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0xdf Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000     0x102d Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x11f Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000    0x15e3c Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x43 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000     0x3659 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x174 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x5a Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x96b Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x9fe Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x174 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x117 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x13e Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x27 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x287 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x5f Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x236 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x391 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x176 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0xf9 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0xea Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0xa0 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x3c Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x12c Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x21e Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x2e Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x1b5 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0xd6 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x11a Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x7e Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x89 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x8a0 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0x47 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x287 Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x21e Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000       0xba Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x12d Core/Src/buttonsBPMFX.o
+ .debug_macro   0x0000000000000000      0x1f9 Core/Src/buttonsBPMFX.o
+ .debug_line    0x0000000000000000      0x80a Core/Src/buttonsBPMFX.o
+ .debug_str     0x0000000000000000    0xcad7b Core/Src/buttonsBPMFX.o
+ .comment       0x0000000000000000       0x7c Core/Src/buttonsBPMFX.o
+ .debug_frame   0x0000000000000000       0x7c Core/Src/buttonsBPMFX.o
+ .ARM.attributes
+                0x0000000000000000       0x39 Core/Src/buttonsBPMFX.o
+ COMMON         0x0000000000000000       0x3f Core/Src/buttonsBPMFX.o
  .group         0x0000000000000000        0xc Core/Src/dac.o
  .group         0x0000000000000000        0xc Core/Src/dac.o
  .group         0x0000000000000000        0xc Core/Src/dac.o
@@ -6983,6 +7111,7 @@ LOAD /opt/st/stm32cubeide_1.4.0/plugins/com.st.stm32cube.ide.mcu.externaltools.g
 LOAD /opt/st/stm32cubeide_1.4.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.linux64_1.4.0.202007081208/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard/crt0.o
 LOAD Core/Src/SSpedalBPMFX.o
 LOAD Core/Src/adc.o
+LOAD Core/Src/buttonsBPMFX.o
 LOAD Core/Src/dac.o
 LOAD Core/Src/gpio.o
 LOAD Core/Src/i2c.o
