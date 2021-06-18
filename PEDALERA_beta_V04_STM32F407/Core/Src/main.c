@@ -30,6 +30,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "buttonsBPMFX.h"
 #include "usbd_midi_if.h"
 #include "SSpedalBPMFX.h"
 #include "osc_dac_lfs.h"
@@ -60,41 +61,6 @@ typedef enum{
 	SAVE_CHORD,
 	SAVE_TUNNE,
 }FOOTKEY_FUNC;
-
-typedef enum{
-	_DO,
-	_REb,
-	_RE,
-	_MIb,
-	_MI,
-	_FA,
-	_SOLb,
-	_SOL,
-	_LAb,
-	_LA,
-	_SIb,
-	_SI,
-	_DO8,
-	_OCT_G,
-	_OCT_M,
-	_OCT_A,
-	_SUST_PROP,
-	_SUST_MIDI,
-	_CHORD,
-	_UP,
-	_DOWN,
-	_LEFT,
-	_RIGHT,
-	_ENTER,
-	_PRESET0,
-	_PRESET1,
-	_PRESET2,
-	_PRESET3,
-	_PRESET4,
-	_PRESET5,
-	_TUNNE,
-	STRUCT_LENGTH,
-}BUTTON_T;
 
 /* USER CODE END PTD */
 
@@ -315,13 +281,14 @@ int main(void)
 	  		popup_timeUp = 0;
 	  	}
 
+	  	updateInputs();
 
-	  	inputCursor();
-	  	inputSustains();
-	  	inputChord();
-	  	inputOctave();
-	  	inputTunne();
-	  	inputPresets();
+//	  	inputCursor();
+//	  	inputSustains();
+//	  	inputChord();
+//	  	inputOctave();
+//	  	inputTunne();
+//	  	inputPresets();
 
 	  	/*
 	  	switch (footKey){
@@ -377,6 +344,8 @@ int main(void)
 				popup_time--;
 				if (popup_time == 1) popup_timeUp = 1;
 			}//end if popup_time
+
+	    	readButtons();
 
 	    	flag_tick = 0;
 	    }// end flag_tick
@@ -435,37 +404,20 @@ void SystemClock_Config(void)
 
 void inputCursor(void){
 
-
 	for (int i = 0; i < 4; i++){     //from the lowest CURSOR value, to the highest one.                                    // 4 presets en total.
-
-	/*
-	//BIT FIELD METHOD:
-	buttonFlag = digitalRead(i + CURSOR_UP);
-
-    //buttonState[1] = buttonFlag << (i + _UP);    //bit field method
-	*/
-
-	buttonState[i + _UP] = HAL_GPIO_ReadPin(cursorPort_list[i], cursorPin_list[i]);//digitalRead(i + CURSOR_UP);
-
-    if(!buttonState[i + _UP] && lastState[i + _UP]){                                // If we read 0, and the last time we read 1, means button was just pressed
-
-		d_pad = i + _UP;
-        lastState[i + _UP] = buttonState[i + _UP];
-		break;
-    }else{
-		d_pad = 0;
-	}
-
-    lastState[i + _UP] = buttonState[i + _UP];                                        // Update last button state.
-  }
-}
+		if (getStatButton(i + IN_UP)==FALL){
+			d_pad = i + IN_UP;
+			break;
+		}else{
+			d_pad = 0;
+		} //end if
+	} //end for
+} //end inputCursor()
 
 
 void inputSustains (void){
 
-	buttonState[_SUST_PROP] = HAL_GPIO_ReadPin(SUST_PROP_GPIO_Port, SUST_PROP_Pin);
-
-	if(!buttonState[_SUST_PROP] && lastState[_SUST_PROP]){
+	if(getStatButton(IN_SUST_PROP)==FALL){
 
 		for (int j = 0; j <= 12; j++){
 			sendChord(lastSendNote[j], 0, 1); // silents all notes
@@ -492,104 +444,85 @@ void inputSustains (void){
 		} //end switch
 
 		screenNum = POPUP_SUSTAIN;
-	}
-	lastState[_SUST_PROP] = buttonState[_SUST_PROP];
+	} //end if getStatButton()
 
-
-	buttonState[_SUST_MIDI] = HAL_GPIO_ReadPin(SUST_MIDI_GPIO_Port, SUST_MIDI_Pin);
-
-	if(!buttonState[_SUST_MIDI] && lastState[_SUST_MIDI]){
+	if(getStatButton(IN_SUST_MIDI)==FALL){
 
 		switch (sustainMode){
 			case 0:
 			case 1:
 				sustainFlag = 1;	// needed to normal notes functioning.
-				//event = {0x0B, 0xB0 | MIDI_CHANNEL, 64, 127}; //64 == sustain.
-				//MidiUSB.sendMIDI(event);
+
 				midi_msg[0] = 0x0B;		//0x0B == type event (control change),
 				midi_msg[1] = 0xB0 | 1;
 				midi_msg[2] = 64;	//64 == sustain.
 				midi_msg[3] = 127;
 				MIDI_SendBuffer(midi_msg, 4);
+
 				sustainMode = 2;
 			break;
 			case 2:
-				//event = {0x0B, 0xB0 | MIDI_CHANNEL, 64, 0};
-				//MidiUSB.sendMIDI(event);
 				midi_msg[0] = 0x0B;	//0x0B == type event (control change)
 				midi_msg[1] = 0xB0 | 1;
 				midi_msg[2] = 64;	//64 == sustain.
 				midi_msg[3] = 0;
 				MIDI_SendBuffer(midi_msg, 4);
+
 				sustainMode = 0;
 			break;
 		} //end switch
 
 		screenNum = POPUP_SUSTAIN;
-	}
-	lastState[_SUST_MIDI] = buttonState[_SUST_MIDI];
-}
+	} //end if getStatButton()
+
+} //end inputSustains()
 
 
 void inputChord (void){
 
-	buttonState[_CHORD] = HAL_GPIO_ReadPin(CHORD_GPIO_Port, CHORD_Pin);
+	if(getStatButton(IN_CHORD)==FALL){
+		acorde = !acorde;
 
-	if(!buttonState[_CHORD] && lastState[_CHORD]){
-
-      acorde = !acorde;
-
-	  if (acorde){
-		screenNum = CHORD_SCREEN;
-		menu = CHORD_SCREEN;
-	  }else{
-		screenNum = MAIN_SCREEN;
-		menu = MAIN_SCREEN;
-	  }
-	}
+		if (acorde){
+			screenNum = CHORD_SCREEN;
+			menu = CHORD_SCREEN;
+		}else{
+			screenNum = MAIN_SCREEN;
+			menu = MAIN_SCREEN;
+		} //end if acorde
+	} //end if getStatButton
 	/*
 	if (acorde){
 		chordSelect();
 	}
 */
-	lastState[_CHORD] = buttonState[_CHORD];
-}
+} //end inputChord()
 
 
 void inputOctave (void){
+	if(getStatButton(IN_OCT_G)==FALL){
+		octava = -1;
+		screenNum=POPUP_OCTAVE;
+		return;
+	}
 
-  buttonState[_OCT_G] = HAL_GPIO_ReadPin(OCT_G_GPIO_Port, OCT_G_Pin); //octava grave
-  if(!buttonState[_OCT_G] && lastState[_OCT_G]){
-      octava = -1;
-	  screenNum=POPUP_OCTAVE;
-  }
+	if (getStatButton(IN_OCT_M)==FALL){
+		octava = 0;
+		screenNum=POPUP_OCTAVE;
+		return;
+	}
 
-  lastState[_OCT_G] = buttonState[_OCT_G];
-
-
-  buttonState[_OCT_M] = HAL_GPIO_ReadPin(OCT_M_GPIO_Port, OCT_M_Pin);//octava central
-  if(!buttonState[_OCT_M] && lastState[_OCT_M]){
-      octava = 0;
-	  screenNum=POPUP_OCTAVE;
-  }
-
-  lastState[_OCT_M] = buttonState[_OCT_M];
-
-
-  buttonState[_OCT_A] = HAL_GPIO_ReadPin(OCT_A_GPIO_Port, OCT_A_Pin);//octava aguda
-  if(!buttonState[_OCT_A] && lastState[_OCT_A]){
-      octava = 1;
-      screenNum=POPUP_OCTAVE;
-  }
-
-  lastState[_OCT_A] = buttonState[_OCT_A];
-}
+	if (getStatButton(IN_OCT_A)==FALL){
+		octava = 1;
+		screenNum=POPUP_OCTAVE;
+		return;
+	}
+} //end inputOctave()
 
 
 void inputTunne(void){
-  	buttonState[_TUNNE] = HAL_GPIO_ReadPin(TUNNE_GPIO_Port, TUNNE_Pin);
 
-	if(!buttonState[_TUNNE] && lastState[_TUNNE]){
+  	if (getStatButton(IN_TUNNE)==FALL){
       tunne = !tunne;
 
 	  if (tunne){
@@ -598,41 +531,31 @@ void inputTunne(void){
 	  }else{
 		screenNum = MAIN_SCREEN;
 		menu = MAIN_SCREEN;
-	  }
-	}
+	  } //end if tunne
+
+	} //end if getStatButton
 	/*
 	if (acorde){
 		menu = TUNNE_SCREEN;
 	}
 */
-	lastState[_TUNNE] = buttonState[_TUNNE];
-}
+} //end inputTunne()
 
 
 void inputPresets (void){
+	for (int i = 0; i < 6; i++){                                         // 6 presets en total.
 
-  for (int i = 0; i < 6; i++){                                         // 6 presets en total.
+		if (getStatButton(i + IN_PRESET0)==FALL){
+			midi_msg[0] = 0x0C;	//0x0C == type event (program change)
+			midi_msg[1] = 0xC0 | 1;
+			midi_msg[2] = i;
+			midi_msg[3] = 0;	//last param == 0 (unused in program change).
+			MIDI_SendBuffer(midi_msg, 4);
+		} //end if
 
-    buttonState[i + _PRESET0] = HAL_GPIO_ReadPin(presetPort_list[i], presetPin_list[i]);  //internal pullup
+	} //end for
 
-    if(!buttonState[i + _PRESET0] && lastState[i + _PRESET0]){                                // If we read 0, and the last time we read 1, means button was just pressed
-
-        //MIDI.sendProgramChange(i - PRESET0, MIDI_CHANNEL);
-
-		//event = {0x0C, 0xC0 | MIDI_CHANNEL, i, 0};
-		//MidiUSB.sendMIDI(event);
-		midi_msg[0] = 0x0C;	//0x0C == type event (program change)
-		midi_msg[1] = 0xC0 | 1;
-		midi_msg[2] = i;
-		midi_msg[3] = 0;	//last param == 0 (unused in program change).
-		MIDI_SendBuffer(midi_msg, 4);
-
-    } //end if
-
-    lastState[i + _PRESET0] = buttonState[i + _PRESET0];                                        // Update last button state.
-  } //end for
-
-} //end inputPresets
+} //end inputPresets()
 
 
 void inputNotes(void){
@@ -641,9 +564,10 @@ void inputNotes(void){
 
   for (int i = 0; i <= 12; i++){
 
-    buttonState[i + _DO] = HAL_GPIO_ReadPin(notePort_list[i], notePin_list[i]); //read current button pin.
+//    buttonState[i + IN_DO] = HAL_GPIO_ReadPin(notePort_list[i], notePin_list[i]); //read current button pin.
 
-    if(!buttonState[i + _DO] && lastState[i + _DO]){  // If we read 1, and the last time we read 0, means button was just pressed.
+//    if(!buttonState[i + IN_DO] && lastState[i + IN_DO]){  // If we read 1, and the last time we read 0, means button was just pressed.
+    if (getStatButton(i + IN_DO)==FALL){
 
         pressedNote = firstDoTunning + i + 12 * octava; //detects the pressed note.
 
@@ -681,7 +605,8 @@ void inputNotes(void){
         }
 
     }
-    else if(buttonState[i] && !lastState[i]){  // If we read 0, and the last time we read 1, means button was just released
+//    else if(buttonState[i] && !lastState[i]){  // If we read 0, and the last time we read 1, means button was just released
+    else if(getStatButton(i + IN_DO)==RISE){
 
     	if (sustainMode != 1){ // If proprietary sustain mode off...
 			sendChord(lastSendNote[i], 0, 1); // 0 in second param means "noteOff".
@@ -689,7 +614,6 @@ void inputNotes(void){
         }
     }
 
-    lastState[i] = buttonState[i];  // Update last button state.
   }
 }
 
@@ -700,9 +624,10 @@ uint8_t flag = 0;
 
 	for (int i = 0; i <= 12; i++){
 
-		buttonState[i + _DO] = HAL_GPIO_ReadPin(notePort_list[i], notePin_list[i]);
+//		buttonState[i + IN_DO] = HAL_GPIO_ReadPin(notePort_list[i], notePin_list[i]);
 
-		if(!buttonState[i + _DO] && lastState[i + _DO]){       // If we read 1, and the last time we read 0, means button was just pressed
+//		if(!buttonState[i + IN_DO] && lastState[i + IN_DO]){       // If we read 1, and the last time we read 0, means button was just pressed
+		if (getStatButton(i + IN_DO)==FALL){
 
 			//storing the selected chord:
 			setChord(i);
@@ -713,21 +638,18 @@ uint8_t flag = 0;
 			lastState[i] = buttonState[i];       // Update last button state.
 			flag = 1;
 			break; 								 //it must exit from function.
-		}
-		else if(buttonState[i] && !lastState[i]){                           // If we read 0, and the last time we read 1, means button was just released
-			//POR AHORA NADA
-		}
-		lastState[i] = buttonState[i];                                        // Update last button state.
-	}
+		} //end if getStatusButton
+	} //end for
 
 	if (!flag){
-		if (d_pad == _LEFT){
+		if (d_pad == IN_LEFT){
 			footKey = NORMAL;
 			screenNum = POPUP_CANCEL;
 			menu = CHORD_SCREEN;
 		}
-	}
-}
+	} //end if !flag
+
+} //end inputSaveChord()
 
 void chordSelect(void){
 
@@ -738,17 +660,17 @@ void chordSelect(void){
 		case 0:
 
 			switch (d_pad){
-				case _DOWN:
+				case IN_DOWN:
 					chordSelect_cursor++;
 					flag = 1;
 					break;
-				case _LEFT:
+				case IN_LEFT:
 					chord--;
 					if (chord < 0)
 						chord = 7;
 					flag = 1;
 					break;
-				case _RIGHT:
+				case IN_RIGHT:
 					chord++;
 					if (chord > 7)
 						chord = 0;
@@ -759,21 +681,21 @@ void chordSelect(void){
 		case 1:
 
 			switch (d_pad){
-				case _UP:
+				case IN_UP:
 					chordSelect_cursor--;
 					flag = 1;
 					break;
-				case _DOWN:
+				case IN_DOWN:
 					chordSelect_cursor++;
 					flag = 1;
 					break;
-				case _LEFT:
+				case IN_LEFT:
 					chordInv--;
 					if (chordInv < 0)
 						chordInv = 2;
 					flag = 1;
 					break;
-				case _RIGHT:
+				case IN_RIGHT:
 					chordInv++;
 					if (chordInv > 2)
 						chordInv = 0;
@@ -784,11 +706,11 @@ void chordSelect(void){
 		case 2:
 
 			switch (d_pad){
-				case _UP:
+				case IN_UP:
 					chordSelect_cursor--;
 					flag = 1;
 					break;
-				case _RIGHT:
+				case IN_RIGHT:
 					footKey = SAVE_CHORD; //
 					menu = RECUEST_FOOTKEY_SCREEN;
 					screenNum = RECUEST_FOOTKEY_SCREEN;
@@ -808,13 +730,13 @@ void tunneSelect(void){
 	uint8_t flag = 0;
 
 	switch (d_pad){
-		case _RIGHT:
+		case IN_RIGHT:
 			firstDoTunning++;
 			if (firstDoTunning >MIDI_B2)
 				firstDoTunning = MIDI_C2;
 			flag = 1;
 			break;
-		case _LEFT:
+		case IN_LEFT:
 			firstDoTunning--;
 			if (firstDoTunning < MIDI_C2)
 				firstDoTunning = MIDI_B2;

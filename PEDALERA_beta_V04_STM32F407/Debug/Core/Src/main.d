@@ -40,8 +40,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/tim.h ../Core/Inc/usart.h ../USB_DEVICE/App/usb_device.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  ../USB_DEVICE/Target/usbd_conf.h ../Core/Inc/gpio.h \
- ../USB_DEVICE/App/usbd_midi_if.h \
- /home/lucho/STM32CubeIDE/Pedalera_ws/PEDALERA_beta_V04_STM32F407/Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Inc/usbd_midi.h \
+ ../Core/Inc/buttonsBPMFX.h ../USB_DEVICE/App/usbd_midi_if.h \
+ /home/lucho/STM32CubeIDE/02_pedalera/PEDALERA_beta_V04_STM32F407/Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Inc/usbd_midi.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
@@ -146,9 +146,11 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 
 ../Core/Inc/gpio.h:
 
+../Core/Inc/buttonsBPMFX.h:
+
 ../USB_DEVICE/App/usbd_midi_if.h:
 
-/home/lucho/STM32CubeIDE/Pedalera_ws/PEDALERA_beta_V04_STM32F407/Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Inc/usbd_midi.h:
+/home/lucho/STM32CubeIDE/02_pedalera/PEDALERA_beta_V04_STM32F407/Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Inc/usbd_midi.h:
 
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 
