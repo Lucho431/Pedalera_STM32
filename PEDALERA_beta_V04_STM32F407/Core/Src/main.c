@@ -158,8 +158,8 @@ uint8_t lcd_refresh_time = 25;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
-void inputCursor(void);
-void inputSustains(void);
+void sustainProp(void);
+void sustainMIDI(void);
 void inputChord(void);
 void inputOctave(void);
 void inputTunne(void);
@@ -282,13 +282,12 @@ int main(void)
 	  	}
 
 	  	updateInputs();
-
-//	  	inputCursor();
-//	  	inputSustains();
-//	  	inputChord();
-//	  	inputOctave();
-//	  	inputTunne();
-//	  	inputPresets();
+	  	if (getStatButton(IN_SUST_PROP)==FALL) sustainProp();
+	  	if (getStatButton(IN_SUST_MIDI)==FALL) sustainMIDI();
+	  	if (getStatButton(IN_CHORD)==FALL)inputChord();
+	  	inputOctave();
+	  	if (getStatButton(IN_TUNNE)==FALL) inputTunne();
+	  	inputPresets();
 
 	  	/*
 	  	switch (footKey){
@@ -401,23 +400,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-
-void inputCursor(void){
-
-	for (int i = 0; i < 4; i++){     //from the lowest CURSOR value, to the highest one.                                    // 4 presets en total.
-		if (getStatButton(i + IN_UP)==FALL){
-			d_pad = i + IN_UP;
-			break;
-		}else{
-			d_pad = 0;
-		} //end if
-	} //end for
-} //end inputCursor()
-
-
-void inputSustains (void){
-
-	if(getStatButton(IN_SUST_PROP)==FALL){
+void sustainProp (void){
 
 		for (int j = 0; j <= 12; j++){
 			sendChord(lastSendNote[j], 0, 1); // silents all notes
@@ -444,9 +427,10 @@ void inputSustains (void){
 		} //end switch
 
 		screenNum = POPUP_SUSTAIN;
-	} //end if getStatButton()
 
-	if(getStatButton(IN_SUST_MIDI)==FALL){
+} //end sustainProp()
+
+void sustainMIDI (void){
 
 		switch (sustainMode){
 			case 0:
@@ -473,14 +457,10 @@ void inputSustains (void){
 		} //end switch
 
 		screenNum = POPUP_SUSTAIN;
-	} //end if getStatButton()
-
-} //end inputSustains()
-
+} //end sustainMIDI()
 
 void inputChord (void){
 
-	if(getStatButton(IN_CHORD)==FALL){
 		acorde = !acorde;
 
 		if (acorde){
@@ -490,12 +470,7 @@ void inputChord (void){
 			screenNum = MAIN_SCREEN;
 			menu = MAIN_SCREEN;
 		} //end if acorde
-	} //end if getStatButton
-	/*
-	if (acorde){
-		chordSelect();
-	}
-*/
+
 } //end inputChord()
 
 
@@ -522,7 +497,6 @@ void inputOctave (void){
 
 void inputTunne(void){
 
-  	if (getStatButton(IN_TUNNE)==FALL){
       tunne = !tunne;
 
 	  if (tunne){
@@ -533,12 +507,6 @@ void inputTunne(void){
 		menu = MAIN_SCREEN;
 	  } //end if tunne
 
-	} //end if getStatButton
-	/*
-	if (acorde){
-		menu = TUNNE_SCREEN;
-	}
-*/
 } //end inputTunne()
 
 
