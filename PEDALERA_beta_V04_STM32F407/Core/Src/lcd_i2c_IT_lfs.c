@@ -1,5 +1,5 @@
 /*
- * lcd_i2c_lfs_IT.c
+ * lcd_i2c_IT_lfs.c
  *
  *  Created on: Sep 2, 2020
  *      Author: Luciano Salvatore
@@ -154,7 +154,7 @@ void __lcd_sendBuff_IT (void){
 	uint16_t I2C_Tx_ptr;
 	uint16_t I2C_Tx_length;
 
-	if (I2CtxComplete != 0){ //si no termino la transmision anterior...
+	//if (I2CtxComplete != 0){ //si no termino la transmision anterior...
 
 		if (lcd_circ_buff_out == LCD_CIRCBUFF_MAX){
 			lcd_circ_buff_out = 0;
@@ -172,15 +172,21 @@ void __lcd_sendBuff_IT (void){
 			lcd_tx_length = lcd_circ_buff_in - lcd_circ_buff_out;
 		}
 
-		I2C_Tx_ptr = lcd_circ_buff_out;
-		I2C_Tx_length = lcd_tx_length;
-		lcd_circ_buff_out += lcd_tx_length;
-		lcd_tx_length = 0;
+//		I2C_Tx_ptr = lcd_circ_buff_out;
+//		I2C_Tx_length = lcd_tx_length;
+//		lcd_circ_buff_out += lcd_tx_length;
+//		lcd_tx_length = 0;
 
-		I2CtxComplete = 0;
-		HAL_I2C_Master_Transmit_IT(i2c_handler, SLAVE_ADDRESS_LCD,(uint8_t *) &lcd_circ_buffer[I2C_Tx_ptr],I2C_Tx_length);
-	}
+		if (I2CtxComplete != 0){
+			I2CtxComplete = 0;
 
+			I2C_Tx_ptr = lcd_circ_buff_out;
+			I2C_Tx_length = lcd_tx_length;
+			lcd_circ_buff_out += lcd_tx_length;
+			lcd_tx_length = 0;
+			HAL_I2C_Master_Transmit_IT(i2c_handler, SLAVE_ADDRESS_LCD,(uint8_t *) &lcd_circ_buffer[I2C_Tx_ptr],I2C_Tx_length);
+		}
+	//}
 }
 
 
