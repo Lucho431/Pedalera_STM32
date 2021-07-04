@@ -27,33 +27,30 @@ typedef enum{
 	IN_OCT_G,
 	IN_OCT_M,
 	IN_OCT_A,
-	IN_SUST_PROP,
-	IN_SUST_MIDI,
-	IN_CHORD,
-	IN_UP,
-	IN_DOWN,
-	IN_LEFT,
-	IN_RIGHT,
-	IN_ENTER,
 	IN_PRESET0,
 	IN_PRESET1,
 	IN_PRESET2,
 	IN_PRESET3,
 	IN_PRESET4,
 	IN_PRESET5,
+	IN_SUST_MIDI,
+	IN_SUST_PROP,
+	IN_CHORD,
 	IN_TUNNE,
+	IN_UP,
+	IN_DOWN,
+	IN_LEFT,
+	IN_RIGHT,
+	IN_OK,
+	IN_BACK,
 	STRUCT_LENGTH,
 }BUTTON_T;
 
-typedef enum{
-    LOW_L,
-    HIGH_L,
-    FALL,
-    RISE,
-}T_INPUT;
-
-void updateInputs(void);
-void readButtons(void);
-T_INPUT getStatButton(BUTTON_T);
+//typedef enum{
+//    LOW_L,
+//    HIGH_L,
+//    FALL,
+//    RISE,
+//}T_INPUT;
 
 #endif /* INC_BUTTONSBPMFX_H_ */

@@ -1,3 +1,2 @@
-buttonsBPMFX.c:17:6:readButtons	8	static
-buttonsBPMFX.c:149:6:updateInputs	16	static
-buttonsBPMFX.c:171:9:getStatButton	16	static
+buttonsBPMFX.c:16:6:readButtons	4	static
+buttonsBPMFX.c:21:9:buttonFall	16	static

@@ -23,6 +23,7 @@
 #include "adc.h"
 #include "dac.h"
 #include "i2c.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "usb_device.h"
@@ -31,6 +32,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "buttonsBPMFX.h"
+#include "74HC165_SPI_lfs.h"
 #include "usbd_midi_if.h"
 #include "SSpedalBPMFX.h"
 #include "osc_dac_lfs.h"
@@ -72,7 +74,7 @@ typedef enum{
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#define GETBUTTONSTATUS(BUTTON,EDGE) (EDGE & (0B1 << (BUTTON)))
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -86,28 +88,16 @@ uint8_t sustainFlag = 1;   /// flag to switch on/off a sustained note.
 uint8_t sustainMode = 0; // 0: none, 1: prop, 2: midi.
 
 
-/*
-const uint16_t buttonList[] = {_DO_Pin, _REb_Pin, _RE_Pin, _MIb_Pin, _MI_Pin, _FA_Pin, _SOLb_Pin, _SOL_Pin, _LAb_Pin, _LA_Pin,
-						_SIb_Pin, _SI_Pin, _DO8_Pin, OCT_G_Pin, OCT_M_Pin, OCT_A_Pin, SUST_PROP_Pin, SUST_MIDI_Pin,
-						CHORD_Pin, UP_Pin, DOWN_Pin, LEFT_Pin, RIGHT_Pin, _ENTER_Pin, PRESET0_Pin,
-						PRESET1_Pin, PRESET2_Pin, PRESET3_Pin, PRESET4_Pin, PRESET5_Pin, TUNNE_Pin};
-*/
+//variables de lectura de botones:
+uint32_t read_button = 0xFFFFFFFF;
+uint32_t last_button = 0xFFFFFFFF;
+uint32_t buttonFall = 0;
+uint32_t buttonRise = 0;
+uint8_t refresh_buttons = 20;
 
-const uint16_t cursorPin_list[] = {UP_Pin, DOWN_Pin, LEFT_Pin, RIGHT_Pin};
-GPIO_TypeDef* cursorPort_list[] = {UP_GPIO_Port, DOWN_GPIO_Port, LEFT_GPIO_Port, RIGHT_GPIO_Port};
 
-const uint16_t presetPin_list[] = {PRESET0_Pin, PRESET1_Pin, PRESET2_Pin,
-									PRESET3_Pin, PRESET4_Pin, PRESET5_Pin};
-GPIO_TypeDef* presetPort_list[] = {PRESET0_GPIO_Port, PRESET1_GPIO_Port, PRESET2_GPIO_Port,
-									PRESET3_GPIO_Port, PRESET4_GPIO_Port, PRESET5_GPIO_Port};
-const uint16_t notePin_list[] = {DO_Pin, REb_Pin, RE_Pin, MIb_Pin, MI_Pin, FA_Pin, SOLb_Pin,
-								SOL_Pin, LAb_Pin, LA_Pin, SIb_Pin, SI_Pin, DO8_Pin};
-GPIO_TypeDef* notePort_list[] = {DO_GPIO_Port, REb_GPIO_Port, RE_GPIO_Port, MIb_GPIO_Port, MI_GPIO_Port,
-								FA_GPIO_Port, SOLb_GPIO_Port, SOL_GPIO_Port, LAb_GPIO_Port, LA_GPIO_Port,
-								SIb_GPIO_Port, SI_GPIO_Port, DO8_GPIO_Port};
-
-uint8_t buttonState [STRUCT_LENGTH];
-uint8_t lastState [STRUCT_LENGTH];
+//uint8_t buttonState [STRUCT_LENGTH];
+//uint8_t lastState [STRUCT_LENGTH];
 
 uint32_t last_GPIOB_IDR = 0;
 
@@ -219,7 +209,10 @@ int main(void)
   MX_ADC1_Init();
   MX_USART3_UART_Init();
   MX_USART6_UART_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+  spi_74HC165_init(&hspi1, PL_bot_GPIO_Port, PL_bot_Pin, CE_bot_GPIO_Port, CE_bot_Pin);
+
   HAL_TIM_Base_Start_IT(&htim2); // 1 ms tick timer.
   HAL_TIM_Base_Start_IT(&htim3); // 44100Hz timer.
 
@@ -281,12 +274,11 @@ int main(void)
 	  		popup_timeUp = 0;
 	  	}
 
-	  	updateInputs();
-	  	if (getStatButton(IN_SUST_PROP)==FALL) sustainProp();
-	  	if (getStatButton(IN_SUST_MIDI)==FALL) sustainMIDI();
-	  	if (getStatButton(IN_CHORD)==FALL)inputChord();
+	  	if (GETBUTTONSTATUS(IN_SUST_PROP, buttonFall)) sustainProp();
+	  	if (GETBUTTONSTATUS(IN_SUST_MIDI, buttonFall)) sustainMIDI();
+	  	if (GETBUTTONSTATUS(IN_CHORD, buttonFall)) inputChord();
 	  	inputOctave();
-	  	if (getStatButton(IN_TUNNE)==FALL) inputTunne();
+	  	if (GETBUTTONSTATUS(IN_TUNNE, buttonFall)) inputTunne();
 	  	inputPresets();
 
 	  	/*
@@ -344,7 +336,17 @@ int main(void)
 				if (popup_time == 1) popup_timeUp = 1;
 			}//end if popup_time
 
-	    	readButtons();
+	    	if (refresh_buttons != 0){
+	    		refresh_buttons--;
+	    	}else{
+	    		last_button = read_button;
+	    		spi_74HC165_receive((uint8_t *)&read_button, sizeof(read_button));
+
+	    		buttonFall = last_button & ~read_button;
+	    		buttonRise = ~last_button & read_button;
+
+	    		refresh_buttons = 20;
+	    	}
 
 	    	flag_tick = 0;
 	    }// end flag_tick
@@ -475,19 +477,20 @@ void inputChord (void){
 
 
 void inputOctave (void){
-	if(getStatButton(IN_OCT_G)==FALL){
+
+	if(GETBUTTONSTATUS(IN_OCT_G, buttonFall)){
 		octava = -1;
 		screenNum=POPUP_OCTAVE;
 		return;
 	}
 
-	if (getStatButton(IN_OCT_M)==FALL){
+	if (GETBUTTONSTATUS(IN_OCT_M, buttonFall)){
 		octava = 0;
 		screenNum=POPUP_OCTAVE;
 		return;
 	}
 
-	if (getStatButton(IN_OCT_A)==FALL){
+	if (GETBUTTONSTATUS(IN_OCT_A, buttonFall)){
 		octava = 1;
 		screenNum=POPUP_OCTAVE;
 		return;
@@ -513,7 +516,7 @@ void inputTunne(void){
 void inputPresets (void){
 	for (int i = 0; i < 6; i++){                                         // 6 presets en total.
 
-		if (getStatButton(i + IN_PRESET0)==FALL){
+		if (GETBUTTONSTATUS(i + IN_PRESET0, buttonFall)){
 			midi_msg[0] = 0x0C;	//0x0C == type event (program change)
 			midi_msg[1] = 0xC0 | 1;
 			midi_msg[2] = i;
@@ -535,8 +538,7 @@ void inputNotes(void){
 //    buttonState[i + IN_DO] = HAL_GPIO_ReadPin(notePort_list[i], notePin_list[i]); //read current button pin.
 
 //    if(!buttonState[i + IN_DO] && lastState[i + IN_DO]){  // If we read 1, and the last time we read 0, means button was just pressed.
-    if (getStatButton(i + IN_DO)==FALL){
-
+    if (GETBUTTONSTATUS(i + IN_DO, buttonFall)){
         pressedNote = firstDoTunning + i + 12 * octava; //detects the pressed note.
 
     	if (acorde){ //If chord mode is on...
@@ -572,9 +574,7 @@ void inputNotes(void){
         	osc_setNote(0);
         }
 
-    }
-//    else if(buttonState[i] && !lastState[i]){  // If we read 0, and the last time we read 1, means button was just released
-    else if(getStatButton(i + IN_DO)==RISE){
+    }else if(GETBUTTONSTATUS(i + IN_DO, buttonRise)){
 
     	if (sustainMode != 1){ // If proprietary sustain mode off...
 			sendChord(lastSendNote[i], 0, 1); // 0 in second param means "noteOff".
@@ -595,7 +595,7 @@ uint8_t flag = 0;
 //		buttonState[i + IN_DO] = HAL_GPIO_ReadPin(notePort_list[i], notePin_list[i]);
 
 //		if(!buttonState[i + IN_DO] && lastState[i + IN_DO]){       // If we read 1, and the last time we read 0, means button was just pressed
-		if (getStatButton(i + IN_DO)==FALL){
+		if (GETBUTTONSTATUS(i + IN_DO, buttonFall)){
 
 			//storing the selected chord:
 			setChord(i);
@@ -603,7 +603,6 @@ uint8_t flag = 0;
 			screenNum = POPUP_SAVED_CHORD;
 			menu = CHORD_SCREEN; 				//return point to chordSelect().
 			lastKey_pos = i; 					// to show in screen the foot key pressed.
-			lastState[i] = buttonState[i];       // Update last button state.
 			flag = 1;
 			break; 								 //it must exit from function.
 		} //end if getStatusButton
