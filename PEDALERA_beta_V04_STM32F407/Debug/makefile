@@ -51,8 +51,8 @@ PEDALERA_beta_V04_STM32F407.bin \
 all: PEDALERA_beta_V04_STM32F407.elf secondary-outputs
 
 # Tool invocations
-PEDALERA_beta_V04_STM32F407.elf: $(OBJS) $(USER_OBJS) /home/lucho/STM32CubeIDE/Pedalera_ws/PEDALERA_beta_V04_STM32F407/STM32F407VGTX_FLASH.ld
-	arm-none-eabi-gcc -o "PEDALERA_beta_V04_STM32F407.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/lucho/STM32CubeIDE/Pedalera_ws/PEDALERA_beta_V04_STM32F407/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PEDALERA_beta_V04_STM32F407.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+PEDALERA_beta_V04_STM32F407.elf: $(OBJS) $(USER_OBJS) /home/lucho/STM32CubeIDE/ws_pedalera/pedalera_STM32/PEDALERA_beta_V04_STM32F407/STM32F407VGTX_FLASH.ld
+	arm-none-eabi-gcc -o "PEDALERA_beta_V04_STM32F407.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/lucho/STM32CubeIDE/ws_pedalera/pedalera_STM32/PEDALERA_beta_V04_STM32F407/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PEDALERA_beta_V04_STM32F407.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

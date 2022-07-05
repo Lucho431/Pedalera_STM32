@@ -94,6 +94,22 @@ uint32_t last_button = 0xFFFFFFFF;
 uint32_t buttonFall = 0;
 uint32_t buttonRise = 0;
 uint8_t refresh_buttons = 20;
+BUTTON_T teclas[] = {
+						IN_DO,
+						IN_REb,
+						IN_RE,
+						IN_MIb,
+						IN_MI,
+						IN_FA,
+						IN_SOLb,
+						IN_SOL,
+						IN_LAb,
+						IN_LA,
+						IN_SIb,
+						IN_SI,
+						IN_DO8,
+};
+
 
 
 //uint8_t buttonState [STRUCT_LENGTH];
@@ -538,7 +554,7 @@ void inputNotes(void){
 //    buttonState[i + IN_DO] = HAL_GPIO_ReadPin(notePort_list[i], notePin_list[i]); //read current button pin.
 
 //    if(!buttonState[i + IN_DO] && lastState[i + IN_DO]){  // If we read 1, and the last time we read 0, means button was just pressed.
-    if (GETBUTTONSTATUS(i + IN_DO, buttonFall)){
+    if (GETBUTTONSTATUS(teclas[i], buttonFall)){
         pressedNote = firstDoTunning + i + 12 * octava; //detects the pressed note.
 
     	if (acorde){ //If chord mode is on...
@@ -574,7 +590,7 @@ void inputNotes(void){
         	osc_setNote(0);
         }
 
-    }else if(GETBUTTONSTATUS(i + IN_DO, buttonRise)){
+    }else if(GETBUTTONSTATUS(teclas[i], buttonRise)){
 
     	if (sustainMode != 1){ // If proprietary sustain mode off...
 			sendChord(lastSendNote[i], 0, 1); // 0 in second param means "noteOff".
@@ -595,7 +611,7 @@ uint8_t flag = 0;
 //		buttonState[i + IN_DO] = HAL_GPIO_ReadPin(notePort_list[i], notePin_list[i]);
 
 //		if(!buttonState[i + IN_DO] && lastState[i + IN_DO]){       // If we read 1, and the last time we read 0, means button was just pressed
-		if (GETBUTTONSTATUS(i + IN_DO, buttonFall)){
+		if (GETBUTTONSTATUS(teclas[i], buttonFall)){
 
 			//storing the selected chord:
 			setChord(i);
