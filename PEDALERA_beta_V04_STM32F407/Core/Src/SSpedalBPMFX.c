@@ -15,6 +15,8 @@ unsigned int   chordSelect_cursor;  //posicion del cursor en el menu de acordes.
 
 uint8_t firstDoTunning;
 
+char texto [50];
+
 char* str_tunne [12]=	{"C",
 							"C#",
 							"D",
@@ -220,7 +222,7 @@ void mainScreen(void){
   	lcd_clearScreen_buff();
 	lcd_cursor_buff(0,0);
 	lcd_string_buff("Afinacion: ");
-	lcd_string_buff(str_tunne[firstDoTunning - 48]);
+	lcd_string_buff(str_tunne[firstDoTunning - 36]);
 	lcd_cursor_buff(0,1);
 	lcd_string_buff("Octava: ");
 	lcd_string_buff(str_octava[octava + 1]);
@@ -264,7 +266,9 @@ void tunneScreen(void){
 	lcd_clearScreen_buff();
 	lcd_cursor_buff(0,0);
 	lcd_string_buff("AFINACION: ");
-	lcd_string_buff(str_tunne[firstDoTunning - 48]);
+	lcd_cursor_buff(8, 2);
+	sprintf(texto, "< %s >", str_tunne[firstDoTunning - 36]);
+	lcd_string_buff(texto);
 }
 
 /*	Method:					plesewait_display

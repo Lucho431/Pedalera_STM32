@@ -293,6 +293,10 @@ int main(void)
 	  	//botones y teclas
 	  	buttonFall = last_button & ~read_button;
 	  	buttonRise = ~last_button & read_button;
+	  	if (GETBUTTONSTATUS(IN_BACK, buttonFall)){
+	  		screenNum = MAIN_SCREEN;
+	  		menu = MAIN_SCREEN;
+	  	}
 	  	if (GETBUTTONSTATUS(IN_SUST_PROP, buttonFall)){
 	  		sustainProp();
 	  	}
@@ -494,15 +498,28 @@ void sustainMIDI (void){
 
 void inputChord (void){
 
-		acorde = !acorde;
-
-		if (acorde){
-			screenNum = CHORD_SCREEN;
-			menu = CHORD_SCREEN;
-		}else{
+	switch (menu){
+		case MAIN_SCREEN:
+			if (acorde != 0){
+				acorde = 0;
+				screenNum = MAIN_SCREEN;
+			}else{
+				screenNum = CHORD_SCREEN;
+				menu = CHORD_SCREEN;
+				acorde = 1;
+			} //fin if acorde
+		break;
+		case CHORD_SCREEN:
 			screenNum = MAIN_SCREEN;
 			menu = MAIN_SCREEN;
-		} //end if acorde
+			acorde = 0;
+		break;
+		default:
+			screenNum = CHORD_SCREEN;
+			menu = CHORD_SCREEN;
+			acorde = 1;
+		break;
+	} //fin switch menu
 
 } //end inputChord()
 
@@ -531,15 +548,13 @@ void inputOctave (void){
 
 void inputTunne(void){
 
-      tunne = !tunne;
-
-	  if (tunne){
+      if (menu != TUNNE_SCREEN){
 		screenNum = TUNNE_SCREEN;
 		menu = TUNNE_SCREEN;
 	  }else{
 		screenNum = MAIN_SCREEN;
 		menu = MAIN_SCREEN;
-	  } //end if tunne
+	  } //end  if menu
 
 } //end inputTunne()
 
