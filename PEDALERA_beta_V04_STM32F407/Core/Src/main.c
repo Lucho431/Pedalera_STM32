@@ -126,7 +126,7 @@ uint8_t acorde = 0;	// flag to switch on/off the chord mode
 
 uint8_t tunne = 0;		// flag to switch on/off the tunne mode
 
-unsigned int d_pad;  //las flechitas pulsadas: 0-ninguna, 1-arriba, 2-abajo, 3-izquierda, 4-derecha.
+//unsigned int d_pad;  //las flechitas pulsadas: 0-ninguna, 1-arriba, 2-abajo, 3-izquierda, 4-derecha.
 
 SCREEN_NUM screenNum = NO_SCREEN;	//flag to select the screen to display.
 SCREEN_NUM last_screenNum = MAIN_SCREEN;	//flag to select the screen to display.
@@ -290,12 +290,26 @@ int main(void)
 	  		popup_timeUp = 0;
 	  	}
 
-	  	if (GETBUTTONSTATUS(IN_SUST_PROP, buttonFall)) sustainProp();
-	  	if (GETBUTTONSTATUS(IN_SUST_MIDI, buttonFall)) sustainMIDI();
-	  	if (GETBUTTONSTATUS(IN_CHORD, buttonFall)) inputChord();
+	  	//botones y teclas
+	  	buttonFall = last_button & ~read_button;
+	  	buttonRise = ~last_button & read_button;
+	  	if (GETBUTTONSTATUS(IN_SUST_PROP, buttonFall)){
+	  		sustainProp();
+	  	}
+	  	if (GETBUTTONSTATUS(IN_SUST_MIDI, buttonFall)){
+	  		sustainMIDI();
+	  	}
+	  	if (GETBUTTONSTATUS(IN_CHORD, buttonFall)){
+	  		inputChord();
+	  	}
 	  	inputOctave();
-	  	if (GETBUTTONSTATUS(IN_TUNNE, buttonFall)) inputTunne();
+	  	if (GETBUTTONSTATUS(IN_TUNNE, buttonFall)){
+	  		inputTunne();
+	  	}
 	  	inputPresets();
+
+	  	last_button = read_button;
+	  	//fin botones y teclas
 
 	  	/*
 	  	switch (footKey){
@@ -338,6 +352,7 @@ int main(void)
 		  flag_dac = 0;
 		}
 
+
 	    if (flag_tick != 0){
 
 	    	if (lcd_refresh_time != 0){
@@ -355,11 +370,11 @@ int main(void)
 	    	if (refresh_buttons != 0){
 	    		refresh_buttons--;
 	    	}else{
-	    		last_button = read_button;
+//	    		last_button = read_button;
 	    		spi_74HC165_receive((uint8_t *)&read_button, sizeof(read_button));
 
-	    		buttonFall = last_button & ~read_button;
-	    		buttonRise = ~last_button & read_button;
+//	    		buttonFall = last_button & ~read_button;
+//	    		buttonRise = ~last_button & read_button;
 
 	    		refresh_buttons = 20;
 	    	}
@@ -625,7 +640,9 @@ uint8_t flag = 0;
 	} //end for
 
 	if (!flag){
-		if (d_pad == IN_LEFT){
+
+
+		if (GETBUTTONSTATUS(IN_LEFT, buttonFall)){
 			footKey = NORMAL;
 			screenNum = POPUP_CANCEL;
 			menu = CHORD_SCREEN;
@@ -642,65 +659,62 @@ void chordSelect(void){
 
 		case 0:
 
-			switch (d_pad){
-				case IN_DOWN:
-					chordSelect_cursor++;
-					flag = 1;
-					break;
-				case IN_LEFT:
-					chord--;
-					if (chord < 0)
-						chord = 7;
-					flag = 1;
-					break;
-				case IN_RIGHT:
-					chord++;
-					if (chord > 7)
-						chord = 0;
-					flag = 1;
-					break;
+			if (GETBUTTONSTATUS(IN_DOWN, buttonFall)){
+				chordSelect_cursor++;
+				flag = 1;
 			}
-			break;
+			if (GETBUTTONSTATUS(IN_LEFT, buttonFall)){
+				chord--;
+				if (chord < 0)
+					chord = 7;
+				flag = 1;
+			}
+			if (GETBUTTONSTATUS(IN_RIGHT, buttonFall)){
+				chord++;
+				if (chord > 7)
+					chord = 0;
+				flag = 1;
+			}
+
+		break;
 		case 1:
 
-			switch (d_pad){
-				case IN_UP:
-					chordSelect_cursor--;
-					flag = 1;
-					break;
-				case IN_DOWN:
-					chordSelect_cursor++;
-					flag = 1;
-					break;
-				case IN_LEFT:
-					chordInv--;
-					if (chordInv < 0)
-						chordInv = 2;
-					flag = 1;
-					break;
-				case IN_RIGHT:
-					chordInv++;
-					if (chordInv > 2)
-						chordInv = 0;
-					flag = 1;
-					break;
+			if (GETBUTTONSTATUS(IN_UP, buttonFall)){
+				chordSelect_cursor--;
+				flag = 1;
 			}
-			break;
+			if (GETBUTTONSTATUS(IN_DOWN, buttonFall)){
+				chordSelect_cursor++;
+				flag = 1;
+			}
+			if (GETBUTTONSTATUS(IN_LEFT, buttonFall)){
+				chordInv--;
+				if (chordInv < 0)
+					chordInv = 2;
+				flag = 1;
+			}
+			if (GETBUTTONSTATUS(IN_RIGHT, buttonFall)){
+				chordInv++;
+				if (chordInv > 2)
+					chordInv = 0;
+				flag = 1;
+			}
+
+		break;
 		case 2:
 
-			switch (d_pad){
-				case IN_UP:
-					chordSelect_cursor--;
-					flag = 1;
-					break;
-				case IN_RIGHT:
-					footKey = SAVE_CHORD; //
-					menu = RECUEST_FOOTKEY_SCREEN;
-					screenNum = RECUEST_FOOTKEY_SCREEN;
-					break;
+			if (GETBUTTONSTATUS(IN_UP, buttonFall)){
+				chordSelect_cursor--;
+				flag = 1;
 			}
-			break;
-	}
+			if (GETBUTTONSTATUS(IN_RIGHT, buttonFall)){
+				footKey = SAVE_CHORD; //
+				menu = RECUEST_FOOTKEY_SCREEN;
+				screenNum = RECUEST_FOOTKEY_SCREEN;
+			}
+
+		break;
+	} //fin switch chordSelect_cursor
 
   if (flag){        ///flag de impresion
 
@@ -712,19 +726,17 @@ void chordSelect(void){
 void tunneSelect(void){
 	uint8_t flag = 0;
 
-	switch (d_pad){
-		case IN_RIGHT:
-			firstDoTunning++;
-			if (firstDoTunning >MIDI_B2)
-				firstDoTunning = MIDI_C2;
-			flag = 1;
-			break;
-		case IN_LEFT:
-			firstDoTunning--;
-			if (firstDoTunning < MIDI_C2)
-				firstDoTunning = MIDI_B2;
-			flag = 1;
-			break;
+	if (GETBUTTONSTATUS(IN_LEFT, buttonFall)){
+		firstDoTunning--;
+		if (firstDoTunning < MIDI_C2)
+			firstDoTunning = MIDI_B2;
+		flag = 1;
+	}
+	if (GETBUTTONSTATUS(IN_RIGHT, buttonFall)){
+		firstDoTunning++;
+		if (firstDoTunning >MIDI_B2)
+			firstDoTunning = MIDI_C2;
+		flag = 1;
 	}
 
 	if (flag){

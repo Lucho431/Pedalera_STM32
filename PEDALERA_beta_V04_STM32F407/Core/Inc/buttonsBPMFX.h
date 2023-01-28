@@ -48,12 +48,12 @@
 
 typedef enum{
 	IN_CHORD,
-	IN_TUNNE,
+	IN_OK, //sustituido. Original: IN_TUNNE
 	IN_UP,
 	IN_DOWN,
 	IN_LEFT,
 	IN_RIGHT,
-	IN_OK,
+	IN_TUNNE, //sustituido. Original: IN_OK
 	IN_BACK,
 	IN_PRESET0,
 	IN_PRESET1,
