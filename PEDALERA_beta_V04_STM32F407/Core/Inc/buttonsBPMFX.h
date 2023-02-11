@@ -82,6 +82,22 @@ typedef enum{
 	STRUCT_LENGTH,
 }BUTTON_T;
 
+typedef enum{
+	LED_PS5,
+	LED_SUST_M,
+	LED_SUST_P,
+	LED_CHORD,
+	LED_OCT_G = 8,
+	LED_OCT_M,
+	LED_OCT_A,
+	LED_PS0,
+	LED_PS1,
+	LED_PS2,
+	LED_PS3,
+	LED_PS4,
+	STRUCT_LEDS_LENGTH,
+}T_LEDS;
+
 //typedef enum{
 //    LOW_L,
 //    HIGH_L,

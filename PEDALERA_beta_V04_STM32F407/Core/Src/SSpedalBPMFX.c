@@ -15,7 +15,6 @@ unsigned int   chordSelect_cursor;  //posicion del cursor en el menu de acordes.
 
 uint8_t firstDoTunning;
 
-char texto [50];
 
 char* str_tunne [12]=	{"C",
 							"C#",
@@ -175,9 +174,6 @@ void turnOnScreen(void){
 	lcd_cursor_buff(5, 3);
 	lcd_string_buff("SYNTHESIZER");
 	lcd_upDate_IT();
-
-
-	HAL_Delay(3000);
 }
 
 /*	Function:					__chordScreen
@@ -267,8 +263,9 @@ void tunneScreen(void){
 	lcd_cursor_buff(0,0);
 	lcd_string_buff("AFINACION: ");
 	lcd_cursor_buff(8, 2);
-	sprintf(texto, "< %s >", str_tunne[firstDoTunning - 36]);
-	lcd_string_buff(texto);
+	lcd_string_buff("< ");
+	lcd_string_buff(str_tunne[firstDoTunning - 36]);
+	lcd_string_buff(" >");
 }
 
 /*	Method:					plesewait_display

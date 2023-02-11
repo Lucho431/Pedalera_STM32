@@ -33,6 +33,7 @@
 /* USER CODE BEGIN Includes */
 #include "buttonsBPMFX.h"
 #include "74HC165_SPI_lfs.h"
+#include "74_HC595_SPI_lfs.h"
 #include "usbd_midi_if.h"
 #include "SSpedalBPMFX.h"
 #include "osc_dac_lfs.h"
@@ -87,6 +88,12 @@ uint8_t sustainFlag = 1;   /// flag to switch on/off a sustained note.
 
 uint8_t sustainMode = 0; // 0: none, 1: prop, 2: midi.
 
+
+//variables de escritura de leds
+uint16_t leds_octava;
+uint16_t leds_presets;
+uint16_t leds_resto;
+uint16_t leds_buffer;
 
 //variables de lectura de botones:
 uint32_t read_button = 0xFFFFFFFF;
@@ -175,6 +182,7 @@ void inputSaveChord(void);
 void chordSelect(void);
 void tunneSelect(void);
 void sendChord(unsigned long, int, int);
+void showLeds(void);
 
 /* USER CODE END PFP */
 
@@ -228,6 +236,7 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   spi_74HC165_init(&hspi1, PL_bot_GPIO_Port, PL_bot_Pin, CE_bot_GPIO_Port, CE_bot_Pin);
+  spi_74HC595_init(&hspi1, ST_leds_GPIO_Port, ST_leds_Pin);
 
   HAL_TIM_Base_Start_IT(&htim2); // 1 ms tick timer.
   HAL_TIM_Base_Start_IT(&htim3); // 44100Hz timer.
@@ -235,9 +244,31 @@ int main(void)
   osc_dac_init(&hdac, DAC_CHANNEL_1);
   osc_setRatios(100, 100, 100);
 
+  leds_buffer = 0xFFFF;
+  spi_74HC595_Transmit((uint8_t*) &leds_buffer, 2 /*bytes*/);
+
   lcd_init(&hi2c1, 0x3f);
+
+  //rutina de encendido//
+
   turnOnScreen();
+  HAL_Delay(500);
+  showLeds();
+  HAL_Delay(500);
   mainScreen();
+  leds_octava = 0b1 << LED_OCT_M;
+  leds_buffer = leds_octava;
+  leds_buffer = ~leds_buffer;
+  spi_74HC595_Transmit((uint8_t*) &leds_buffer, 2 /*bytes*/);
+  //fin rutina de encendido//
+
+  //mensaje midi de prueba//
+//  midi_msg[0] = 0x0C;	//0x0C == type event (program change)
+//  midi_msg[1] = 0xC0 | 1;
+//  midi_msg[2] = 60;
+//  midi_msg[3] = 0;	//last param == 0 (unused in program change).
+//  MIDI_SendBuffer(midi_msg, 4);
+  //fin mensaje midi de prueba//
 
   /* USER CODE END 2 */
 
@@ -380,6 +411,17 @@ int main(void)
 //	    		buttonFall = last_button & ~read_button;
 //	    		buttonRise = ~last_button & read_button;
 
+	    		leds_buffer = leds_octava | leds_presets | leds_resto;
+	    		leds_buffer = ~leds_buffer; //pasa a logica negativa
+	    		spi_74HC595_Transmit((uint8_t*) &leds_buffer, 2 /*bytes*/);
+
+//	    		for (uint8_t i = 0; i < 16; i++){
+//	    			buff_leds = 0x1 << i;
+//	    			spi_74HC595_Transmit((uint8_t*) &buff_leds, 2);
+//	    			__NOP();
+//	    		}
+
+
 	    		refresh_buttons = 20;
 	    	}
 
@@ -455,11 +497,15 @@ void sustainProp (void){
 			case 0:
 				lastSustainNote = 0;
 				sustainMode = 1; //prop
+				leds_resto |= 0x1 << LED_SUST_P;
+				leds_resto &= ~(0x1 << LED_SUST_M);
 			break;
 
 			case 1:
 				sustainFlag = 1;
 				sustainMode = 0;
+				leds_resto &= ~(0x1 << LED_SUST_M);
+				leds_resto &= ~(0x1 << LED_SUST_P);
 			break;
 		} //end switch
 
@@ -481,6 +527,8 @@ void sustainMIDI (void){
 				MIDI_SendBuffer(midi_msg, 4);
 
 				sustainMode = 2;
+				leds_resto |= 0x1 << LED_SUST_M;
+				leds_resto &= ~(0x1 << LED_SUST_P);
 			break;
 			case 2:
 				midi_msg[0] = 0x0B;	//0x0B == type event (control change)
@@ -490,6 +538,8 @@ void sustainMIDI (void){
 				MIDI_SendBuffer(midi_msg, 4);
 
 				sustainMode = 0;
+				leds_resto &= ~(0x1 << LED_SUST_M);
+				leds_resto &= ~(0x1 << LED_SUST_P);
 			break;
 		} //end switch
 
@@ -502,22 +552,26 @@ void inputChord (void){
 		case MAIN_SCREEN:
 			if (acorde != 0){
 				acorde = 0;
+				leds_resto &= ~(0x1 << LED_CHORD);
 				screenNum = MAIN_SCREEN;
 			}else{
 				screenNum = CHORD_SCREEN;
 				menu = CHORD_SCREEN;
 				acorde = 1;
+				leds_resto |= 0x1 << LED_CHORD;
 			} //fin if acorde
 		break;
 		case CHORD_SCREEN:
 			screenNum = MAIN_SCREEN;
 			menu = MAIN_SCREEN;
 			acorde = 0;
+			leds_resto &= ~(0x1 << LED_CHORD);
 		break;
 		default:
 			screenNum = CHORD_SCREEN;
 			menu = CHORD_SCREEN;
 			acorde = 1;
+			leds_resto |= 0x1 << LED_CHORD;
 		break;
 	} //fin switch menu
 
@@ -529,18 +583,21 @@ void inputOctave (void){
 	if(GETBUTTONSTATUS(IN_OCT_G, buttonFall)){
 		octava = -1;
 		screenNum=POPUP_OCTAVE;
+		leds_octava = 0x1 << LED_OCT_G;
 		return;
 	}
 
 	if (GETBUTTONSTATUS(IN_OCT_M, buttonFall)){
 		octava = 0;
 		screenNum=POPUP_OCTAVE;
+		leds_octava = 0x1 << LED_OCT_M;
 		return;
 	}
 
 	if (GETBUTTONSTATUS(IN_OCT_A, buttonFall)){
 		octava = 1;
 		screenNum=POPUP_OCTAVE;
+		leds_octava = 0x1 << LED_OCT_A;
 		return;
 	}
 } //end inputOctave()
@@ -568,7 +625,12 @@ void inputPresets (void){
 			midi_msg[2] = i;
 			midi_msg[3] = 0;	//last param == 0 (unused in program change).
 			MIDI_SendBuffer(midi_msg, 4);
-		} //end if
+			if (i == 5){
+				leds_presets = 0x1;
+			}else{
+				leds_presets = 0x1 << (LED_PS0 + i);
+			}
+		} //end if GETBUTTONSTATUS
 
 	} //end for
 
@@ -790,6 +852,54 @@ void sendChord(unsigned long bnotes, int velocity, int channel){
 	  midi_msg[3] = velocity;
 	  MIDI_SendBuffer(midi_msg, 4);
   }
+} //fin sendChord()
+
+
+void showLeds(void){
+
+	uint16_t demora = 50;
+	uint8_t posLed[] = {	LED_OCT_G,
+							LED_OCT_M,
+							LED_OCT_A,
+							LED_PS0,
+							LED_PS1,
+							LED_PS2,
+							LED_PS3,
+							LED_PS4,
+							LED_PS5,
+							LED_SUST_P,
+							LED_SUST_M,
+							LED_CHORD };
+
+	uint16_t indexLed = 0x1 << LED_OCT_G;
+	indexLed = ~indexLed;
+	spi_74HC595_Transmit((uint8_t *)&indexLed, 2/*bytes*/);
+	HAL_Delay(demora);
+
+	indexLed = (0x1 << posLed[0]) | (0x1 << posLed[1]);
+	indexLed = ~indexLed;
+	spi_74HC595_Transmit((uint8_t *)&indexLed, 2/*bytes*/);
+	HAL_Delay(demora);
+
+	for (uint8_t i=0; i<10; i++){
+		indexLed = (0x1 << posLed[i]) | (0x1 << posLed[i + 1]) | (0x1 << posLed[i + 2]);
+		indexLed = ~indexLed;
+		spi_74HC595_Transmit((uint8_t *)&indexLed, 2/*bytes*/);
+		HAL_Delay(demora);
+	}
+
+	indexLed = (0x1 << posLed[10]) | (0x1 << posLed[11]);
+	indexLed = ~indexLed;
+	spi_74HC595_Transmit((uint8_t *)&indexLed, 2/*bytes*/);
+	HAL_Delay(demora);
+
+	indexLed = 0x1 << LED_CHORD;
+	indexLed = ~indexLed;
+	spi_74HC595_Transmit((uint8_t *)&indexLed, 2/*bytes*/);
+	HAL_Delay(demora);
+
+	indexLed = 0xFFFF;
+	spi_74HC595_Transmit((uint8_t *)&indexLed, 2/*bytes*/);
 }
 
 
