@@ -24,6 +24,8 @@ int8_t osc_setNote(uint8_t);
 int8_t osc_setRatios(uint8_t, uint8_t, uint8_t);
 
 
+void adc_potes_init(void);
+void set_nextPote (void);
 
 /* C++ detection */
 #ifdef __cplusplus

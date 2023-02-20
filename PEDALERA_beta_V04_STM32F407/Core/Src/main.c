@@ -88,6 +88,10 @@ uint8_t sustainFlag = 1;   /// flag to switch on/off a sustained note.
 
 uint8_t sustainMode = 0; // 0: none, 1: prop, 2: midi.
 
+//variables del adc
+uint32_t bufferADC [3] = {0, 0, 0};
+uint8_t flag_adc = 0;
+uint16_t refresh_adc = 250;
 
 //variables de escritura de leds
 uint16_t leds_octava;
@@ -238,6 +242,8 @@ int main(void)
   spi_74HC165_init(&hspi1, PL_bot_GPIO_Port, PL_bot_Pin, CE_bot_GPIO_Port, CE_bot_Pin);
   spi_74HC595_init(&hspi1, ST_leds_GPIO_Port, ST_leds_Pin);
 
+  adc_potes_init();
+
   HAL_TIM_Base_Start_IT(&htim2); // 1 ms tick timer.
   HAL_TIM_Base_Start_IT(&htim3); // 44100Hz timer.
 
@@ -260,6 +266,8 @@ int main(void)
   leds_buffer = leds_octava;
   leds_buffer = ~leds_buffer;
   spi_74HC595_Transmit((uint8_t*) &leds_buffer, 2 /*bytes*/);
+
+  HAL_ADC_Start_IT(&hadc1);
   //fin rutina de encendido//
 
   //mensaje midi de prueba//
@@ -270,13 +278,15 @@ int main(void)
 //  MIDI_SendBuffer(midi_msg, 4);
   //fin mensaje midi de prueba//
 
+  osc_setNote(24);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  	switch (screenNum){
+	  switch (screenNum){
 	  		case MAIN_SCREEN:
 	  			mainScreen();
 	  			last_screenNum = screenNum;
@@ -423,6 +433,21 @@ int main(void)
 
 
 	    		refresh_buttons = 20;
+	    	}
+
+	    	if (refresh_adc != 0){
+	    		refresh_adc--;
+	    	}else{
+	    		if (flag_adc != 0){
+
+	    			set_nextPote();
+
+	    			HAL_ADC_Start_IT(&hadc1);
+
+	    			flag_adc = 0;
+
+	    			refresh_adc = 250;
+	    		}
 	    	}
 
 	    	flag_tick = 0;
@@ -915,6 +940,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 
 void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c){
 	_lcd_ISR();
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
+	flag_adc = 1;
 }
 /* USER CODE END 4 */
 

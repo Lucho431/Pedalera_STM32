@@ -8,5 +8,5 @@ SSpedalBPMFX.c:280:6:plesewaitScreen	16	static
 SSpedalBPMFX.c:327:6:on_off_octave	8	static
 SSpedalBPMFX.c:345:6:recuest_footkey	8	static
 SSpedalBPMFX.c:364:6:pop_up_savedChord	16	static
-SSpedalBPMFX.c:386:6:pop_up_sustain	8	static
-SSpedalBPMFX.c:418:6:pop_up_cancel	8	static
+SSpedalBPMFX.c:391:6:pop_up_sustain	8	static
+SSpedalBPMFX.c:423:6:pop_up_cancel	8	static

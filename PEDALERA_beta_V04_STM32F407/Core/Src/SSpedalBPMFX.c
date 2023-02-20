@@ -368,7 +368,12 @@ void pop_up_savedChord (uint8_t fk){
 	lcd_string_buff("ACORDE GRABADO EN LA");
 	lcd_cursor_buff(0,2);
 	lcd_string_buff("TECLA ");
-	lcd_string_buff(str_tunne[fk]);
+
+	if( fk == 12){
+		lcd_string_buff("C AGUDA");
+	}else{
+		lcd_string_buff(str_tunne[fk]);
+	}
 
 }
 

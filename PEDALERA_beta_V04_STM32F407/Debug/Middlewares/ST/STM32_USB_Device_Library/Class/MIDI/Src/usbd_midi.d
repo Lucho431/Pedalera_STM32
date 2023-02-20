@@ -1,6 +1,6 @@
 Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Src/usbd_midi.o: \
  ../Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Src/usbd_midi.c \
- /home/lucho/STM32CubeIDE/ws_pedalera/pedalera_STM32/PEDALERA_beta_V04_STM32F407/Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Inc/usbd_midi.h \
+ /home/lucho/STM32CubeIDE/Pedalera_ws/PEDALERA_beta_V04_STM32F407/Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Inc/usbd_midi.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  ../USB_DEVICE/Target/usbd_conf.h ../Core/Inc/main.h \
@@ -49,7 +49,7 @@ Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Src/usbd_midi.o: \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h
 
-/home/lucho/STM32CubeIDE/ws_pedalera/pedalera_STM32/PEDALERA_beta_V04_STM32F407/Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Inc/usbd_midi.h:
+/home/lucho/STM32CubeIDE/Pedalera_ws/PEDALERA_beta_V04_STM32F407/Middlewares/ST/STM32_USB_Device_Library/Class/MIDI/Inc/usbd_midi.h:
 
 ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
 
