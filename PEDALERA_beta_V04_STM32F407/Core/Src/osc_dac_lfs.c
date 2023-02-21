@@ -51,12 +51,18 @@ uint32_t dac_ch;
 uint16_t phase = 0;
 //uint8_t flag_dac = 0;
 uint16_t dac_out = 0;
+uint16_t dac_max = 0;
+uint16_t phase_max = 0;
 
 int8_t nota_activa = -1;
 
-uint8_t ratio_sen = 100;
-uint8_t ratio_cuad = 100;
-uint8_t ratio_ramp = 100;
+uint32_t pote_sen = 100;
+uint32_t pote_cuad = 100;
+uint32_t pote_ramp = 100;
+
+uint32_t ratio_sen = 100;
+uint32_t ratio_cuad = 100;
+uint32_t ratio_ramp = 100;
 
 
 void osc_dac_init(DAC_HandleTypeDef *p_hdac, uint32_t ch){
@@ -72,7 +78,7 @@ void osc_dac_update(void){
 	if (nota_activa!=-1){
 		phase+= nota_incrFase[nota_activa];
 		if (phase>OSC_LAST) phase -= OSC_LAST;
-		dac_out = ratio_sen/100*tabla_seno[phase] + ratio_cuad/100*tabla_cuadrada[phase] + ratio_ramp/100*tabla_sierra[phase];
+		dac_out = ratio_sen*tabla_seno[phase]/100 + ratio_cuad*tabla_cuadrada[phase]/100 + ratio_ramp*tabla_sierra[phase]/100;
 		//HAL_DAC_SetValue(handler_dac, dac_ch, DAC_ALIGN_12B_R, dac_out);
 	}else{
 		phase = 0;
@@ -80,6 +86,10 @@ void osc_dac_update(void){
 	}
 
 	HAL_DAC_SetValue(handler_dac, dac_ch, DAC_ALIGN_12B_R, dac_out);
+	if (dac_out > dac_max){
+		dac_max = dac_out;
+		phase_max = phase;
+	}
 
 //	flag_dac = 0;
 }
@@ -147,7 +157,7 @@ void set_nextPote (void){
 	switch (pote){
 		case 0:
 
-			ratio_cuad = (uint8_t)HAL_ADC_GetValue(&hadc1);
+			pote_cuad = HAL_ADC_GetValue(&hadc1);
 
 			sConfig.Channel = ADC_CHANNEL_9;
 			sConfig.Rank = 1;
@@ -156,22 +166,24 @@ void set_nextPote (void){
 //				Error_Handler();
 			}
 			pote = 1;
+			HAL_ADC_Start_IT(&hadc1);
 		break;
 		case 1:
 
-			ratio_ramp = (uint8_t)HAL_ADC_GetValue(&hadc1);
+			pote_ramp = HAL_ADC_GetValue(&hadc1);
 
-			sConfig.Channel = ADC_CHANNEL_10;
+			sConfig.Channel = ADC_CHANNEL_11;
 			sConfig.Rank = 1;
 			if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
 			{
 //				Error_Handler();
 			}
 			pote = 2;
+			HAL_ADC_Start_IT(&hadc1);
 		break;
 		case 2:
 
-			ratio_sen = (uint8_t)HAL_ADC_GetValue(&hadc1);
+			pote_sen = HAL_ADC_GetValue(&hadc1);
 
 			sConfig.Channel = ADC_CHANNEL_8;
 			sConfig.Rank = 1;
@@ -180,7 +192,21 @@ void set_nextPote (void){
 			{
 //				Error_Handler();
 			}
+			pote = 3;
+		case 3:
+
+			pote_cuad = (pote_cuad >> 4) & 0xFF;
+			pote_ramp = (pote_ramp >> 4) & 0xFF;
+			pote_sen = (pote_sen >> 4) & 0xFF;
+
+			ratio_cuad = pote_cuad * 100 / 255;
+			ratio_ramp = pote_ramp * 100 / 255;
+			ratio_sen = pote_sen * 100 / 255;
+
+			//osc_setRatios((uint8_t)ratio_sen, (uint8_t)ratio_cuad, (uint8_t)ratio_ramp);
+
 			pote = 0;
+			HAL_ADC_Start_IT(&hadc1);
 		break;
 		default:
 		break;

@@ -1,6 +1,6 @@
-osc_dac_lfs.c:62:6:osc_dac_init	16	static
-osc_dac_lfs.c:70:6:osc_dac_update	8	static
-osc_dac_lfs.c:88:8:osc_setNote	16	static
-osc_dac_lfs.c:103:8:osc_setRatios	16	static
-osc_dac_lfs.c:113:6:adc_potes_init	8	static
-osc_dac_lfs.c:144:6:set_nextPote	8	static
+osc_dac_lfs.c:68:6:osc_dac_init	16	static
+osc_dac_lfs.c:76:6:osc_dac_update	8	static
+osc_dac_lfs.c:98:8:osc_setNote	16	static
+osc_dac_lfs.c:113:8:osc_setRatios	16	static
+osc_dac_lfs.c:123:6:adc_potes_init	8	static
+osc_dac_lfs.c:154:6:set_nextPote	8	static

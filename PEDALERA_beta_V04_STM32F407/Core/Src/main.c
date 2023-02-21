@@ -91,7 +91,7 @@ uint8_t sustainMode = 0; // 0: none, 1: prop, 2: midi.
 //variables del adc
 uint32_t bufferADC [3] = {0, 0, 0};
 uint8_t flag_adc = 0;
-uint16_t refresh_adc = 250;
+uint16_t refresh_adc = 500;
 
 //variables de escritura de leds
 uint16_t leds_octava;
@@ -278,7 +278,7 @@ int main(void)
 //  MIDI_SendBuffer(midi_msg, 4);
   //fin mensaje midi de prueba//
 
-  osc_setNote(24);
+//  osc_setNote(24);
 
   /* USER CODE END 2 */
 
@@ -442,11 +442,13 @@ int main(void)
 
 	    			set_nextPote();
 
-	    			HAL_ADC_Start_IT(&hadc1);
+//	    			HAL_ADC_Start_IT(&hadc1);
 
 	    			flag_adc = 0;
 
-	    			refresh_adc = 250;
+	    			refresh_adc = 500;
+	    		}else{
+	    			HAL_ADC_Start_IT(&hadc1);
 	    		}
 	    	}
 
